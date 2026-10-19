@@ -1,0 +1,14 @@
+# review runs and local project data never belong in this repo
+pcb-review/
+pcb-review.config.json
+**/.venv/
+__pycache__/
+*.pyc
+# never commit design data or vendor documents by accident
+*.PcbDoc
+*.SchDoc
+*.PrjPcb
+*.kicad_pcb
+*.kicad_sch
+*.pdf
+!docs/*.pdf
