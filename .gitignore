@@ -1,6 +1,6 @@
 # review runs and local project data never belong in this repo
-pcb-review/
-pcb-review.config.json
+/pcb-review/
+/pcb-review.config.json
 **/.venv/
 __pycache__/
 *.pyc

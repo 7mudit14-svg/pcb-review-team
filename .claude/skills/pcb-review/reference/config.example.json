@@ -1,0 +1,32 @@
+{
+  "project_name": "My Board Rev A",
+  "product_context": "One paragraph: what the board does, what it connects to, and the system it lives in (e.g. one of two identical boards in a stereo camera head).",
+  "package_dir": "release/MyBoard_RevA",
+  "cad_dirs": [
+    "cad"
+  ],
+  "eda": "altium-eda-agent",
+  "copper_layers": 4,
+  "fab_profile": "jlcpcb_standard",
+  "requirements_sources": [
+    "docs/requirements.pdf"
+  ],
+  "design_docs": [
+    "release/MyBoard_RevA/docs/Design_Approach.md"
+  ],
+  "decisions_log": "release/MyBoard_RevA/docs/Decisions.md",
+  "reference_design": "Vendor reference circuit/BOM the design should follow, if any (file + section).",
+  "interfaces": "e.g. USB 3.2 Gen1 (90 ohm differential), I2C 400 kHz at 3.3 V, 5 V / 1.2 A input",
+  "datasheets_dir": "datasheets",
+  "other_references": [],
+  "reference_guides": [],
+  "house_rules": [
+    "Schematic: functional blocks in titled boxes, net labels between blocks, short local wires only.",
+    "Routing: 45-degree bends, no 90-degree corners, Y-joints instead of T-joints.",
+    "Design decisions belong to the designer; reviewers recommend with options."
+  ],
+  "confidential": [],
+  "output_dir": "pcb-review",
+  "python": "python",
+  "pdf_python": ""
+}

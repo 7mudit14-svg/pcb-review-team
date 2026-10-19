@@ -1,0 +1,18 @@
+{
+  "name": "JLCPCB standard rigid (screening values)",
+  "source": "https://jlcpcb.com/capabilities/pcb-capabilities",
+  "verified_on": null,
+  "note": "Screening limits for pcb_checks.py. Fab capabilities change; confirm every value on the fab's capability page before release and record the date in verified_on.",
+  "max_layers": 32,
+  "min_trace_mm": 0.09,
+  "min_space_mm": 0.09,
+  "min_drill_mm": 0.15,
+  "min_via_pad_mm": 0.25,
+  "min_board_mm": [5, 5],
+  "max_board_mm": [500, 400],
+  "copper_to_edge_mm": 0.2,
+  "min_silk_line_mm": 0.15,
+  "min_silk_text_height_mm": 0.8,
+  "min_mask_dam_mm": 0.1,
+  "impedance_tolerance_pct": 10
+}

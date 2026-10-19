@@ -1,0 +1,23 @@
+# Checklist: Senior PCB Design Engineer (key `pcb`, id prefix `PCB`)
+
+Scope: stack-up, controlled impedance, high-speed routing, return paths, placement, high-voltage spacing, EMC layout, routing quality. References: IPC-2141A (controlled impedance), IPC-2221B (spacing, Table 6-1), Sierra Circuits High-Speed PCB Design Guide (2020) §3.5 (controlled impedance), §4.1 (stack-up), §7.2-7.3 (placement, high-speed routing), §8 (checklist); TI SZZA009 §2.4-2.5 (traces, cables and connectors).
+
+| ID | Check | How to verify | If it fails |
+|---|---|---|---|
+| PCB-01 | Stack-up: layer count, order and dielectrics match the fab's published stack-up; the EDA stack-up matches it (thickness, Dk, copper weights) | Live `pcb_get_layer_stackup` vs stack-up doc/CSV vs fab template | MAJOR |
+| PCB-02 | Every controlled-impedance net has a reference plane directly adjacent, continuous along its whole length (no splits, voids, slots or plane edges under it) | Live polygons + layer usage; Sierra §3.5.5-3.5.6 | CRITICAL for a split under a multi-Gbps pair |
+| PCB-03 | Impedance: width/gap recomputed from the stack-up hits the target within tolerance; the fab note states target, tolerance, layers and nets; an impedance profile exists in the EDA tool | `pcb_calc.py diff-microstrip ...` + fab calculator figure if documented | MAJOR (CRITICAL if > ±20 % off) |
+| PCB-04 | Differential pairs exist as pair objects/rules in the EDA tool, with the correct width/gap and matched-length rules; DRC actually checks them | Live `pcb_get_differential_pairs`, `pcb_get_diff_pair_rules`, DRC report rule list | MAJOR (zero pair objects = rules not enforced) |
+| PCB-05 | Intra-pair skew within the interface budget; length-matching serpentines placed near the mismatch source and not over plane gaps | Live trace lengths → `pcb_calc.py skew` | MAJOR |
+| PCB-06 | Pair geometry: coupled along the route, uncoupled length only at breakouts, symmetric breakouts, no stubs, 45° or arc bends (no 90°), spacing to other nets ≥ ~3× width (or per spec) | Live tracks / renders | MAJOR (MINOR for small deviations) |
+| PCB-07 | Layer transitions on high-speed nets: count minimal, return (ground) vias next to each signal via, no long stubs | Live vias | MAJOR |
+| PCB-08 | Connector breakouts for fast signals follow the connector's recommended pattern (G-S-S-G contacts, pad neck-down, plane relief if specified) | Connector datasheet + footprint | MAJOR |
+| PCB-09 | Noisy nets (switch nodes, clocks, high dv/dt HV outputs) are short and kept away from sensitive and high-speed nets and board edges | Placement / routing review | MAJOR |
+| PCB-10 | High-voltage spacing: worst-case peak voltage → IPC-2221B Table 6-1. **Mask-coated conductors use B4; exposed pads/terminations use A6 (uncoated); internal layers use B1.** Rules implemented as net-class clearances, including pad-to-pad inside connectors and between HV parts. Any exception is justified (e.g. inside a component's own pin field). | `pcb_calc.py spacing --volts V` + live rules + pad geometry | CRITICAL if exposed HV copper is below A6 with no justification; MAJOR otherwise |
+| PCB-11 | Placement: decoupling at the pins, critical paths short, functional grouping, connectors at edges facing their cables, nothing in keep-outs | Renders + component list | MAJOR-MINOR |
+| PCB-12 | Return-current continuity at every place where signals change reference planes, including through connectors (enough ground contacts beside fast pairs; TI SZZA009 §2.5.3 on signal-to-return ratios in cables) | Pinouts + vias | MAJOR |
+| PCB-13 | Copper-to-edge and copper-to-cut-out clearance meet the fab minimum and the rules; pours pulled back from edges, notches and slots | Live rules / outline + profile `copper_to_edge_mm` | MAJOR |
+| PCB-14 | Stitching: ground pours tied to the plane with vias around the board edge and around pairs; no unconnected copper islands (antennas) | Live polygons/vias | MINOR-MAJOR |
+| PCB-15 | Routing quality and house style: no acute angles, no unnecessary T-junctions (house rule may require Y-joints), consistent widths per net class, no redundant segments, teardrops if required | Renders + live tracks; brief house rules | MINOR (house rule may raise it) |
+| PCB-16 | DRC: the newest DRC report post-dates the last PCB save; 0 violations or each waived with a reason; the rule set covers clearance, width, impedance pairs, matched length, height, HV classes | DRC report + `FRESH-1` + live rules | MAJOR |
+| PCB-17 | EMC basics: no slots or splits that turn planes into antennas; fast signals not routed along board edges; filtering where cables leave the board (Sierra ch. 5, TI SZZA009 §2.5.4) | Renders + docs | MINOR-MAJOR |
