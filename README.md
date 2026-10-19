@@ -1,6 +1,6 @@
 # PCB Review Team
 
-**A role-based hardware design review for [Claude Code](https://claude.com/claude-code).** Nine AI engineers each review your PCB project from their own discipline. Every one of them is checked by an independent reviewer. Deterministic scripts screen the release package, and a rule-based gate decides whether the design is ready for human sign-off.
+**A role-based hardware design review for [Claude Code](https://claude.com/claude-code), JLCPCB-ready out of the box.** Nine AI engineers each review your PCB project from their own discipline. Every one of them is checked by an independent reviewer. Deterministic scripts screen the release package, and a rule-based gate decides whether the design is ready for human sign-off.
 
 It is built for the moment before you send a board to fab, or before a design review where someone will question every choice.
 
@@ -52,6 +52,21 @@ flowchart LR
    The model can't talk its way past the gate, and the tool never "approves". A human signs off.
 6. **Integrated report:** top issues, decisions the designer must make, scorecard, refuted findings (so you can see what was thrown out and why), open hand-offs and limitations.
 
+## JLCPCB-ready
+The default fab profile and the manufacturing checks are tuned for ordering from JLCPCB:
+- **Capability screening:** `profiles/jlcpcb_standard.json` holds min track/space, min drill, via pad, copper-to-edge, silk and mask-dam limits. Confirm them on JLC's capability page and record the date in `verified_on`.
+- **JLC assembly files:**
+  - Understands the JLC BOM format (`Comment, Designator, Footprint, LCSC Part #`) and CPL format (`Designator, Mid X, Mid Y, Layer, Rotation`, values with `mm`), as well as Altium's native pick-and-place.
+  - Flags placed lines with no LCSC part number, BOM ↔ CPL mismatches, DNP parts left in the CPL, and parts outside the board.
+- **Order specifics** the Manufacturing Engineer checks (MFG-17):
+  - stack-up template name and the impedance-control option
+  - order-number placement
+  - consigned parts
+  - LCSC stock at order time
+  - panel/rail needs for small boards
+
+Other fabs work too: add a profile JSON to `profiles/` and set `fab_profile` in the config. *Not affiliated with or endorsed by JLCPCB.*
+
 ## Install
 
 Requirements: Claude Code and Python 3.9+. Optional:
@@ -59,7 +74,7 @@ Requirements: Claude Code and Python 3.9+. Optional:
 - `pypdf` (installed by `--with-pdf`) to turn large PDFs (standards, guides, long specs) into text for the reviewers.
 
 ```bash
-git clone https://github.com/<you>/pcb-review-team
+git clone https://github.com/7mudit14-svg/pcb-review-team
 python pcb-review-team/install.py --project path/to/your/project --with-pdf
 ```
 
